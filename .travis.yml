@@ -11,4 +11,4 @@ cache:
   directories:
   - "$HOME/.m2"
 install: true  #Skipping the Installation Step
-script: mvn clean install surefire-report:report site -DgenerateReports=false --settings .travis.settings.xml
+script: cp .travis.settings.xml $HOME/.m2/settings.xml && mvn clean install surefire-report:report site -DgenerateReports=false
