@@ -6,8 +6,9 @@ env:
     - MAVEN_OPTS="-Dmaven.artifact.threads=64"
 before_cache:
   - rm -Rf $HOME/.m2/repository/org/talend/components
+  - rm -Rf $HOME/.m2/repository/org/talend/sdk/component
 cache:
   directories:
   - "$HOME/.m2"
 install: true  #Skipping the Installation Step
-script: mvn clean install surefire-report:report site -DgenerateReports=false
+script: mvn clean install surefire-report:report site -DgenerateReports=false --settings .travis.settings.xml
