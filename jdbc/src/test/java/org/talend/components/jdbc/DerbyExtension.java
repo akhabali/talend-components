@@ -62,12 +62,13 @@ public class DerbyExtension implements BeforeAllCallback, AfterAllCallback, Para
                 super.flush();
             }
         });
+        final String effectiveServerHost = (String) serverControl.getCurrentProperties().get("derby.drda.host");
         dataSource = new ClientDataSource();
         if (element.createDb()) {
             dataSource.setCreateDatabase("create");
         }
         dataSource.setDatabaseName(dbName);
-        dataSource.setServerName(element.server());
+        dataSource.setServerName(effectiveServerHost);
         dataSource.setPortNumber(port);
         dataSource.setUser(element.user());
         if (!element.password().isEmpty()) {
@@ -84,7 +85,7 @@ public class DerbyExtension implements BeforeAllCallback, AfterAllCallback, Para
             }
         }
 
-        derbyDb = new DerbyInfo(element.server(), port, dbName);
+        derbyDb = new DerbyInfo(effectiveServerHost, port, dbName);
     }
 
     private void execScript(final String script, final Connection c) {
