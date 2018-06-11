@@ -60,7 +60,6 @@ class ActionServiceTest {
         datastore.setUserId("bad");
         datastore.setPassword("az");
         final HealthCheckStatus status = myService.validateBasicDatastore(datastore);
-        System.out.println(status);
         assertNotNull(status);
         assertEquals(HealthCheckStatus.Status.KO, status.getStatus());
     }

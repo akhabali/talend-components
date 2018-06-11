@@ -13,7 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(DerbyExtension.class)
 public @interface WithDerby {
 
-    String server() default "0.0.0.0";
+    String server() default "";
 
     int port() default 0;
 
