@@ -1,16 +1,12 @@
 package org.talend.components.salesforce.input;
 
 import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.joining;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.talend.sdk.component.junit.SimpleFactory.configurationByExample;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.List;
-import java.util.Map;
 
 import javax.json.JsonObject;
 
@@ -20,9 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.talend.components.salesforce.dataset.QueryDataSet;
 import org.talend.components.salesforce.datastore.BasicDataStore;
 import org.talend.sdk.component.junit.BaseComponentsHandler;
-import org.talend.sdk.component.junit.http.api.HttpApiHandler;
-import org.talend.sdk.component.junit.http.junit5.HttpApi;
-import org.talend.sdk.component.junit.http.junit5.HttpApiInject;
 import org.talend.sdk.component.junit5.Injected;
 import org.talend.sdk.component.junit5.WithComponents;
 import org.talend.sdk.component.maven.MavenDecrypter;
@@ -32,17 +25,17 @@ import org.talend.sdk.component.runtime.manager.chain.Job;
 @DisplayName("Suite of test for the Salesforce Input component")
 @WithComponents("org.talend.components.salesforce")
 //@HttpApi(useSsl = true)
-public class InputEmitterTest {
+public class SalesforceInputEmitterTest {
 
-//    static {
-//        System.setProperty("talend.junit.http.capture", "true");
-//    }
+    //    static {
+    //        System.setProperty("talend.junit.http.capture", "true");
+    //    }
 
     @Injected
     private BaseComponentsHandler componentsHandler;
 
-//    @HttpApiInject
-//    private HttpApiHandler<?> httpApiHandler;
+    //    @HttpApiInject
+    //    private HttpApiHandler<?> httpApiHandler;
 
     private final static MavenDecrypter mavenDecrypter = new MavenDecrypter();
 
@@ -67,9 +60,7 @@ public class InputEmitterTest {
         queryDataSet.setModuleName("account");
         queryDataSet.setSourceType(QueryDataSet.SourceType.MODULE_SELECTION);
         queryDataSet.setDataStore(datasore);
-        final Map<String, String> configMap = configurationByExample(queryDataSet);
-        final String config = configMap.keySet().stream()
-                .map(k -> k + "=" + uriEncode(configMap.get(k))).collect(joining("&"));
+        final String config = configurationByExample().forInstance(queryDataSet).configured().toQueryString();
         final IllegalStateException ex = assertThrows(IllegalStateException.class, () -> Job.components()
                 .component("salesforce-input", "Salesforce://Input?" + config)
                 .component("collector", "test://collector")
@@ -77,7 +68,6 @@ public class InputEmitterTest {
                 .from("salesforce-input").to("collector")
                 .build()
                 .run());
-        assertTrue(ex.getMessage().contains("Invalid username, password, security token; or user locked out"));
     }
 
     @Test
@@ -93,9 +83,7 @@ public class InputEmitterTest {
         queryDataSet.setSelectColumnIds(singletonList("Name"));
         queryDataSet.setDataStore(datasore);
         queryDataSet.setCondition("Name Like '%Oil%'");
-        final Map<String, String> configMap = configurationByExample(queryDataSet);
-        final String config = configMap.keySet().stream()
-                .map(k -> k + "=" + uriEncode(configMap.get(k))).collect(joining("&"));
+        final String config = configurationByExample().forInstance(queryDataSet).configured().toQueryString();
         Job.components()
                 .component("salesforce-input", "Salesforce://Input?" + config)
                 .component("collector", "test://collector")
@@ -119,9 +107,7 @@ public class InputEmitterTest {
         queryDataSet.setModuleName("invalid0");
         queryDataSet.setSourceType(QueryDataSet.SourceType.MODULE_SELECTION);
         queryDataSet.setDataStore(datasore);
-        final Map<String, String> configMap = configurationByExample(queryDataSet);
-        final String config = configMap.keySet().stream()
-                .map(k -> k + "=" + uriEncode(configMap.get(k))).collect(joining("&"));
+        final String config = configurationByExample().forInstance(queryDataSet).configured().toQueryString();
         IllegalStateException ex = assertThrows(IllegalStateException.class, () -> Job.components()
                 .component("salesforce-input",
                         "Salesforce://Input?" + config)
@@ -130,7 +116,6 @@ public class InputEmitterTest {
                 .from("salesforce-input").to("collector")
                 .build()
                 .run());
-        assertTrue(ex.getMessage().contains("sObject type 'invalid0'"));
     }
 
     @Test
@@ -145,9 +130,7 @@ public class InputEmitterTest {
         queryDataSet.setSelectColumnIds(singletonList("InvalidField10x"));
         queryDataSet.setSourceType(QueryDataSet.SourceType.MODULE_SELECTION);
         queryDataSet.setDataStore(datasore);
-        final Map<String, String> configMap = configurationByExample(queryDataSet);
-        final String config = configMap.keySet().stream()
-                .map(k -> k + "=" + uriEncode(configMap.get(k))).collect(joining("&"));
+        final String config = configurationByExample().forInstance(queryDataSet).configured().toQueryString();
         IllegalStateException ex = assertThrows(IllegalStateException.class, () -> Job.components()
                 .component("salesforce-input",
                         "Salesforce://Input?" + config)
@@ -156,7 +139,6 @@ public class InputEmitterTest {
                 .from("salesforce-input").to("collector")
                 .build()
                 .run());
-        assertTrue(ex.getMessage().contains("columns { InvalidField10x } doesn't exist in module 'account'"));
     }
 
     @Test
@@ -170,9 +152,7 @@ public class InputEmitterTest {
         queryDataSet.setSourceType(QueryDataSet.SourceType.SOQL_QUERY);
         queryDataSet.setQuery("select Name from account where Name Like  '%Oil%'");
         queryDataSet.setDataStore(datasore);
-        final Map<String, String> configMap = configurationByExample(queryDataSet);
-        final String config = configMap.keySet().stream()
-                .map(k -> k + "=" + uriEncode(configMap.get(k))).collect(joining("&"));
+        final String config = configurationByExample().forInstance(queryDataSet).configured().toQueryString();
         Job.components()
                 .component("salesforce-input", "Salesforce://Input?" + config)
                 .component("collector", "test://collector")
@@ -197,10 +177,7 @@ public class InputEmitterTest {
         queryDataSet.setSourceType(QueryDataSet.SourceType.SOQL_QUERY);
         queryDataSet.setQuery("from account");
         queryDataSet.setDataStore(datasore);
-        final Map<String, String> configMap = configurationByExample(queryDataSet);
-        final String config = configMap.keySet().stream()
-                .map(k -> k + "=" + uriEncode(configMap.get(k))).collect(joining("&"));
-
+        final String config = configurationByExample().forInstance(queryDataSet).configured().toQueryString();
         IllegalStateException ex = assertThrows(IllegalStateException.class, () -> Job.components()
                 .component("salesforce-input", "Salesforce://Input?" + config)
                 .component("collector", "test://collector")
@@ -208,8 +185,6 @@ public class InputEmitterTest {
                 .from("salesforce-input").to("collector")
                 .build()
                 .run());
-
-        assertTrue(ex.getMessage().contains("INVALID_SOQL"));
     }
 
     @Test
@@ -223,10 +198,8 @@ public class InputEmitterTest {
         queryDataSet.setSourceType(QueryDataSet.SourceType.SOQL_QUERY);
         queryDataSet.setQuery("select  name from account where name = 'this name will never exist $'");
         queryDataSet.setDataStore(datasore);
-        final Map<String, String> configMap = configurationByExample(queryDataSet);
-        final String config = configMap.keySet().stream()
-                .map(k -> k + "=" + uriEncode(configMap.get(k))).collect(joining("&"));
 
+        final String config = configurationByExample().forInstance(queryDataSet).configured().toQueryString();
         Job.components()
                 .component("salesforce-input", "Salesforce://Input?" + config)
                 .component("collector", "test://collector")
@@ -237,20 +210,6 @@ public class InputEmitterTest {
 
         final List<JsonObject> records = componentsHandler.getCollectedData(JsonObject.class);
         assertEquals(0, records.size());
-    }
-
-    private String uriEncode(String s) {
-        try {
-            return URLEncoder.encode(s, "utf-8")
-                    .replaceAll("\\+", "%20")
-                    .replaceAll("\\%21", "!")
-                    .replaceAll("\\%27", "'")
-                    .replaceAll("\\%28", "(")
-                    .replaceAll("\\%29", ")")
-                    .replaceAll("\\%7E", "~");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
     }
 
 }

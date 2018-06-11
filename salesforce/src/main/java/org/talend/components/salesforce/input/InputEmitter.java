@@ -22,7 +22,6 @@ import com.sforce.soap.partner.PartnerConnection;
 import com.sforce.soap.partner.fault.ApiFault;
 import com.sforce.ws.ConnectionException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.talend.components.salesforce.BulkResultSet;
 import org.talend.components.salesforce.dataset.QueryDataSet;
 import org.talend.components.salesforce.service.BasicDatastoreService;
@@ -175,7 +174,7 @@ public class InputEmitter implements Serializable {
         }
         sb.append(" from ");
         sb.append(dataset.getModuleName());
-        if (!StringUtils.isEmpty(dataset.getCondition())) {
+        if (dataset.getCondition() != null && !dataset.getCondition().isEmpty()) {
             sb.append(" where ");
             sb.append(dataset.getCondition());
         }
@@ -189,7 +188,8 @@ public class InputEmitter implements Serializable {
             if (field.getType() == FieldType.address || // no address
                     field.getType() == FieldType.location || // no location
                     // no picklist that has a parent
-                    (field.getType() == FieldType.picklist && StringUtils.isNotBlank(field.getCompoundFieldName()))) {
+                    (field.getType() == FieldType.picklist && field.getCompoundFieldName() != null
+                            && !field.getCompoundFieldName().trim().isEmpty())) {
                 continue;
             }
             fields.add(field.getName());

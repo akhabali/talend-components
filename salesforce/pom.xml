@@ -26,6 +26,13 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- salesforce dependencies-->
+    <dependency>
       <groupId>com.force.api</groupId>
       <artifactId>force-wsc</artifactId>
       <version>39.0.5</version>
@@ -34,17 +41,6 @@
       <groupId>com.force.api</groupId>
       <artifactId>force-partner-api</artifactId>
       <version>42.0.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>1.7.25</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.4</version>
     </dependency>
     <dependency>
       <groupId>net.sourceforge.javacsv</groupId>
@@ -61,31 +57,27 @@
     <dependency>
       <groupId>org.talend.sdk.component</groupId>
       <artifactId>component-runtime-manager</artifactId>
-      <version>1.0.1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.talend.sdk.component</groupId>
       <artifactId>component-runtime-junit</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.talend.sdk.component</groupId>
       <artifactId>component-runtime-http-junit</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>${junit5.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
-      <version>1.7.25</version>
-      <scope>test</scope>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
-
-  <build>
-  </build>
 </project>

@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * This Builder is used for creating SOQL query from defined Schema and Module Name.
  */
@@ -151,17 +149,18 @@ public class SoqlQueryBuilder {
         String moduleName = null;
         for (String item : inputStrings) {
             String[] array = item.split(RECORDS);
-            String columnName = null;
             //We expect only 2 values from splitting field tableName and columnName
-            if ((array.length != 2) || StringUtils.isBlank(array[0]) || StringUtils.isBlank(columnName = array[1])) {
+            if ((array.length != 2) || array[0] == null || array[0].isEmpty() || array[1] == null
+                    || array[1].isEmpty()) {
                 // Should notify user about invalid table name or column name.
                 throw new IllegalStateException(
                         "INVALID_SOQL: Relation Parent to Child has invalid child table name or column name");
             }
+
             if (null == moduleName) {
                 moduleName = getSplittedValue(array[0]);
             }
-            sb.append(getSplittedValue(columnName)).append(COMMA_AND_SPACE);
+            sb.append(getSplittedValue(array[1])).append(COMMA_AND_SPACE); //columnName
         }
         sb.delete(sb.length() - 2, sb.length());
         sb.append(FROM_CLAUSE).append(moduleName).append(RIGHT_PARENTHESIS);

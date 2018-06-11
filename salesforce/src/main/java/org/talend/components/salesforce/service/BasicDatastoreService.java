@@ -80,12 +80,7 @@ public class BasicDatastoreService {
         return null;
     }
 
-    private static void enableTLSv11AndTLSv12ForJava7() {
-        String version = System.getProperty("java.version");
-        if (version != null && version.startsWith("1.7")) {
-            System.setProperty("https.protocols", "TLSv1.1,TLSv1.2");
-        }
-    }
+
 
     public PartnerConnection connect(final BasicDataStore datastore, final LocalConfiguration localConfiguration)
             throws ConnectionException {
@@ -97,7 +92,6 @@ public class BasicDatastoreService {
         if (endpoint.contains(RETIRED_ENDPOINT)) {
             endpoint = endpoint.replaceFirst(RETIRED_ENDPOINT, ACTIVE_ENDPOINT);
         }
-        enableTLSv11AndTLSv12ForJava7();
         final String ep = endpoint;
         ConnectorConfig config = new ConnectorConfig() {
 
