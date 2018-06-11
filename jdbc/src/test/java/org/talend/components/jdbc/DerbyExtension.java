@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.nio.file.Files;
@@ -54,7 +55,13 @@ public class DerbyExtension implements BeforeAllCallback, AfterAllCallback, Para
         final String dbName = Files.createTempDirectory("derby").toFile().getAbsolutePath() + "/" + element.dbName();
         final String url = "jdbc:derby://" + element.server() + ":" + port + "/" + dbName;
         serverControl = new NetworkServerControl(InetAddress.getByName(element.server()), port);
-        serverControl.start(null);
+        serverControl.start(new PrintWriter(System.out) {
+
+            @Override
+            public void close() {
+                super.flush();
+            }
+        });
         dataSource = new ClientDataSource();
         if (element.createDb()) {
             dataSource.setCreateDatabase("create");
