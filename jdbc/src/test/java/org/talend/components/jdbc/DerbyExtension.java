@@ -45,6 +45,11 @@ public class DerbyExtension implements BeforeAllCallback, AfterAllCallback, Para
         } else {
             port = element.port();
         }
+
+        if (port == 0) {
+            throw new IllegalStateException("Can't get a free port for derby database");
+        }
+
         System.setProperty("derby.stream.error.file", element.logFile());
         final String dbName = Files.createTempDirectory("derby").toFile().getAbsolutePath() + "/" + element.dbName();
         final String url = "jdbc:derby://" + element.server() + ":" + port + "/" + dbName;
