@@ -15,12 +15,12 @@
   <description>A suite of Talend components</description>
 
   <properties>
-    <tacokit.api.version>1.0.1-SNAPSHOT</tacokit.api.version>
+    <tacokit.api.version>1.0.2-SNAPSHOT</tacokit.api.version>
     <tacokit.api.impl.version>1.0.1-SNAPSHOT</tacokit.api.impl.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <talend.documentation.htmlAndPdf>false</talend.documentation.htmlAndPdf>
     <junit-platform-surefire-provider.version>1.2.0</junit-platform-surefire-provider.version>
-    <junit5.version>5.1.0</junit5.version>
+    <junit5.version>5.2.0</junit5.version>
     <talend.component.studioHome>C:\\Users\\akhabali\\dev\\TalendStudio\\7.0.1\\TOS_DI-20180530_1932-V7.1.1SNAPSHOT
     </talend.component.studioHome>
   </properties>
@@ -28,6 +28,7 @@
 
   <modules>
     <module>salesforce</module>
+    <module>jdbc</module>
   </modules>
 
   <dependencyManagement>
@@ -43,17 +44,44 @@
         <artifactId>component-runtime-junit</artifactId>
         <version>${tacokit.api.impl.version}</version>
         <scope>test</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.talend.sdk.component</groupId>
         <artifactId>component-runtime-http-junit</artifactId>
-        <version>${tacokit.api.version}</version>
+        <version>${tacokit.api.impl.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.talend.sdk.component</groupId>
+        <artifactId>component-runtime-manager</artifactId>
+        <version>${tacokit.api.impl.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
         <version>1.16.20</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.7.25</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>1.7.25</version>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>${junit5.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -157,14 +185,36 @@
 
   <repositories>
     <repository>
-      <id>oss</id>
+      <id>oss-snapshot</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+    <repository>
+      <id>oss-releases</id>
+      <url>https://oss.sonatype.org/content/repositories/releases/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
     </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
       <id>oss</id>
       <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
     </pluginRepository>
   </pluginRepositories>
 </project>
