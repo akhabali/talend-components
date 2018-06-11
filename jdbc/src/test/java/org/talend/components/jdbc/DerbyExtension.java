@@ -22,7 +22,9 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class DerbyExtension implements BeforeAllCallback, AfterAllCallback, ParameterResolver {
 
     private NetworkServerControl serverControl;
@@ -54,7 +56,8 @@ public class DerbyExtension implements BeforeAllCallback, AfterAllCallback, Para
         System.setProperty("derby.stream.error.file", element.logFile());
         final String dbName = Files.createTempDirectory("derby").toFile().getAbsolutePath() + "/" + element.dbName();
         final String url = "jdbc:derby://" + element.server() + ":" + port + "/" + dbName;
-        serverControl = new NetworkServerControl(InetAddress.getByName(element.server()), port);
+        final InetAddress serverAdress = InetAddress.getByName(element.server());
+        serverControl = new NetworkServerControl(serverAdress, port);
         serverControl.start(new PrintWriter(System.out) {
 
             @Override
@@ -62,13 +65,27 @@ public class DerbyExtension implements BeforeAllCallback, AfterAllCallback, Para
                 super.flush();
             }
         });
-        final String effectiveServerHost = (String) serverControl.getCurrentProperties().get("derby.drda.host");
+        int tryCount = 5;   //wait for server to start
+        while (tryCount > 0) {
+            tryCount--;
+            try {
+                serverControl.ping();
+                break;
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
         dataSource = new ClientDataSource();
         if (element.createDb()) {
             dataSource.setCreateDatabase("create");
         }
         dataSource.setDatabaseName(dbName);
-        dataSource.setServerName(effectiveServerHost);
+        dataSource.setServerName(serverAdress.getHostAddress());
         dataSource.setPortNumber(port);
         dataSource.setUser(element.user());
         if (!element.password().isEmpty()) {
@@ -85,7 +102,7 @@ public class DerbyExtension implements BeforeAllCallback, AfterAllCallback, Para
             }
         }
 
-        derbyDb = new DerbyInfo(effectiveServerHost, port, dbName);
+        derbyDb = new DerbyInfo(serverAdress.getHostAddress(), port, dbName);
     }
 
     private void execScript(final String script, final Connection c) {
